@@ -22,7 +22,7 @@ const ENDPOINTS: Endpoint[] = [
   "tps": 2.5,
   "validators": 10
 }`,
-    example: `curl https://explorer.garudachain.id/api/stats`,
+    example: `curl https://explorer.garudachain.org/api/stats`,
   },
   {
     method: "GET", path: "/api/blocks", desc: "Mendapatkan daftar block terbaru",
@@ -40,7 +40,7 @@ const ENDPOINTS: Endpoint[] = [
   "gasUsed": 21000,
   "gasLimit": 8000000
 }]`,
-    example: `curl https://explorer.garudachain.id/api/blocks?limit=10`,
+    example: `curl https://explorer.garudachain.org/api/blocks?limit=10`,
   },
   {
     method: "GET", path: "/api/block/:height", desc: "Mendapatkan detail block berdasarkan tinggi block",
@@ -57,7 +57,7 @@ const ENDPOINTS: Endpoint[] = [
   "gasUsed": 21000,
   "gasLimit": 8000000
 }`,
-    example: `curl https://explorer.garudachain.id/api/block/150234`,
+    example: `curl https://explorer.garudachain.org/api/block/150234`,
   },
   {
     method: "GET", path: "/api/transactions", desc: "Mendapatkan daftar transaksi terbaru",
@@ -74,7 +74,7 @@ const ENDPOINTS: Endpoint[] = [
   "timestamp": "2026-03-20T10:30:00Z",
   "status": "confirmed"
 }]`,
-    example: `curl https://explorer.garudachain.id/api/transactions?limit=20`,
+    example: `curl https://explorer.garudachain.org/api/transactions?limit=20`,
   },
   {
     method: "GET", path: "/api/tx/:hash", desc: "Mendapatkan detail transaksi berdasarkan hash",
@@ -93,7 +93,7 @@ const ENDPOINTS: Endpoint[] = [
   "status": "confirmed",
   "data": "0x..."
 }`,
-    example: `curl https://explorer.garudachain.id/api/tx/0xabc123...`,
+    example: `curl https://explorer.garudachain.org/api/tx/0xabc123...`,
   },
   {
     method: "GET", path: "/api/address/:address", desc: "Mendapatkan informasi alamat (balance, transaksi)",
@@ -106,7 +106,7 @@ const ENDPOINTS: Endpoint[] = [
   "lastSeen": "2026-03-20T10:30:00Z",
   "transactions": [...]
 }`,
-    example: `curl https://explorer.garudachain.id/api/address/GRD1q8f4k2m9p3n7x5v6b1c0z2w4e6r8t0y`,
+    example: `curl https://explorer.garudachain.org/api/address/GRD1q8f4k2m9p3n7x5v6b1c0z2w4e6r8t0y`,
   },
   {
     method: "GET", path: "/api/search", desc: "Mencari block, transaksi, atau alamat",
@@ -115,7 +115,7 @@ const ENDPOINTS: Endpoint[] = [
   "type": "block" | "transaction" | "address",
   "result": { ... }
 }`,
-    example: `curl https://explorer.garudachain.id/api/search?q=150234`,
+    example: `curl https://explorer.garudachain.org/api/search?q=150234`,
   },
   {
     method: "GET", path: "/api/health", desc: "Cek status kesehatan API dan koneksi ke node",
@@ -125,7 +125,7 @@ const ENDPOINTS: Endpoint[] = [
   "nodeVersion": "GarudaChain v28.1",
   "uptime": "99.9%"
 }`,
-    example: `curl https://explorer.garudachain.id/api/health`,
+    example: `curl https://explorer.garudachain.org/api/health`,
   },
 ];
 
@@ -168,7 +168,7 @@ export function ApiDocs() {
               <Globe className="w-4 h-4 text-primary" />
               <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Base URL</p>
             </div>
-            <p className="text-[13px] font-mono font-semibold text-foreground">explorer.garudachain.id</p>
+            <p className="text-[13px] font-mono font-semibold text-foreground">explorer.garudachain.org</p>
           </div>
           <div className="bg-white border border-border rounded-lg p-4">
             <div className="flex items-center gap-2 mb-1">
@@ -201,16 +201,16 @@ export function ApiDocs() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { lang: "cURL", code: `curl https://explorer.garudachain.id/api/stats` },
+              { lang: "cURL", code: `curl https://explorer.garudachain.org/api/stats` },
               { lang: "JavaScript", code: `const res = await fetch(
-  'https://explorer.garudachain.id/api/stats'
+  'https://explorer.garudachain.org/api/stats'
 );
 const data = await res.json();
 console.log(data.latestBlock);` },
               { lang: "Python", code: `import requests
 
 r = requests.get(
-  'https://explorer.garudachain.id/api/stats'
+  'https://explorer.garudachain.org/api/stats'
 )
 data = r.json()
 print(data['latestBlock'])` },

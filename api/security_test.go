@@ -282,7 +282,7 @@ func TestRouteLabel(t *testing.T) {
 
 func TestAllowedOriginFor(t *testing.T) {
 	securityConfig.Lock()
-	securityConfig.AllowedOrigins = []string{"https://app.garudachain.id", "https://admin.garudachain.id"}
+	securityConfig.AllowedOrigins = []string{"https://app.garudachain.org", "https://admin.garudachain.org"}
 	securityConfig.Unlock()
 	defer func() {
 		securityConfig.Lock()
@@ -290,7 +290,7 @@ func TestAllowedOriginFor(t *testing.T) {
 		securityConfig.Unlock()
 	}()
 
-	if got := allowedOriginFor("https://app.garudachain.id"); got != "https://app.garudachain.id" {
+	if got := allowedOriginFor("https://app.garudachain.org"); got != "https://app.garudachain.org" {
 		t.Errorf("allowed origin rejected: %q", got)
 	}
 	if got := allowedOriginFor("https://evil.example.com"); got != "" {

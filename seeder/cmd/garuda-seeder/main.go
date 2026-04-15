@@ -3,9 +3,9 @@
 // Crawls the GarudaChain P2P network and serves live node IPs via DNS A/AAAA
 // records. Used to populate the DNS seeds configured in chainparams.cpp:
 //
-//	seed.garudachain.id.   → mainnet nodes
-//	seed2.garudachain.id.  → mainnet nodes (second nameserver)
-//	testnet-seed.garudachain.id. → testnet nodes
+//	seed.garudachain.org.   → mainnet nodes
+//	seed2.garudachain.org.  → mainnet nodes (second nameserver)
+//	testnet-seed.garudachain.org. → testnet nodes
 //
 // # Usage
 //
@@ -13,7 +13,7 @@
 //
 // # Environment variables
 //
-//	SEEDER_HOST        Hostname to serve, e.g. seed.garudachain.id (required)
+//	SEEDER_HOST        Hostname to serve, e.g. seed.garudachain.org (required)
 //	SEEDER_BIND        DNS bind address (default :53)
 //	SEEDER_HTTP        HTTP status/metrics bind address (default :8080)
 //	SEEDER_NETWORK     mainnet or testnet (default mainnet)
@@ -24,8 +24,8 @@
 // The seed server must be the authoritative NS for the seed hostname.
 // Add these DNS records at your registrar:
 //
-//	seed.garudachain.id.  NS  ns1.garudachain.id.
-//	ns1.garudachain.id.   A   <this server's IP>
+//	seed.garudachain.org.  NS  ns1.garudachain.org.
+//	ns1.garudachain.org.   A   <this server's IP>
 //
 // Run with CAP_NET_BIND_SERVICE or as root to bind port 53.
 // In production use the systemd unit in deploy/seed-node/.
@@ -46,7 +46,7 @@ import (
 )
 
 func main() {
-	host       := flag.String("host",      envOr("SEEDER_HOST", ""),                     "Hostname to serve (e.g. seed.garudachain.id)")
+	host       := flag.String("host",      envOr("SEEDER_HOST", ""),                     "Hostname to serve (e.g. seed.garudachain.org)")
 	bind       := flag.String("bind",      envOr("SEEDER_BIND", ":53"),                  "DNS bind address")
 	httpBind   := flag.String("http",      envOr("SEEDER_HTTP", ":8080"),                "HTTP status bind address")
 	network    := flag.String("network",   envOr("SEEDER_NETWORK", "mainnet"),           "mainnet or testnet")
@@ -54,7 +54,7 @@ func main() {
 	flag.Parse()
 
 	if *host == "" {
-		log.Fatal("SEEDER_HOST must be set (e.g. seed.garudachain.id)")
+		log.Fatal("SEEDER_HOST must be set (e.g. seed.garudachain.org)")
 	}
 
 	// Select network
@@ -102,8 +102,8 @@ func defaultSeeds(network string) []string {
 	}
 	// Mainnet bootstrap nodes (add IPs after launch)
 	return []string{
-		// "node1.garudachain.id:6300",
-		// "node2.garudachain.id:6300",
+		// "node1.garudachain.org:6300",
+		// "node2.garudachain.org:6300",
 	}
 }
 

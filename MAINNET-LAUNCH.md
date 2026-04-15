@@ -57,8 +57,8 @@ Anything marked **BLOCKER** must be green before a public launch.
 
 ## P1 — Network and seeds
 
-- [x] DNS seeds listed in chainparams: `seed.garudachain.id`,
-      `seed2.garudachain.id` — `chainparams.cpp:160-161`
+- [x] DNS seeds listed in chainparams: `seed.garudachain.org`,
+      `seed2.garudachain.org` — `chainparams.cpp:160-161`
 - [ ] **BLOCKER** DNS seed infrastructure deployed and reachable from
       public internet (seeder daemon in `seeder/`, monitored, 2+ regions)
 - [ ] `vFixedSeeds` populated with a minimum of 8 hardcoded IP seeds in

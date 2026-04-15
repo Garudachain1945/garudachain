@@ -435,7 +435,7 @@ export function Mining() {
               </div>
               <div className="bg-gray-900 rounded-lg p-4 font-mono text-[12px] text-gray-300">
                 <p className="text-gray-500 mb-1"># Atau download binary langsung (Linux/Windows/Mac)</p>
-                <p className="text-emerald-400">$ wget https://releases.garudachain.id/v1.0/garudachain-1.0-linux-x86_64.tar.gz</p>
+                <p className="text-emerald-400">$ wget https://releases.garudachain.org/v1.0/garudachain-1.0-linux-x86_64.tar.gz</p>
                 <p className="text-emerald-400">$ tar -xzf garudachain-1.0-linux-x86_64.tar.gz</p>
                 <p className="text-emerald-400">$ cd garudachain-1.0/bin/</p>
               </div>
@@ -459,8 +459,8 @@ export function Mining() {
               <p className="text-emerald-400">rpcpassword=YourSecurePassword123</p>
               <p className="text-cyan-400 mt-2"># === Seed Node (Wajib) ===</p>
               <p className="text-emerald-400">addnode=103.144.213.11:9333</p>
-              <p className="text-emerald-400">addnode=seed1.garudachain.id:9333</p>
-              <p className="text-emerald-400">addnode=seed2.garudachain.id:9333</p>
+              <p className="text-emerald-400">addnode=seed1.garudachain.org:9333</p>
+              <p className="text-emerald-400">addnode=seed2.garudachain.org:9333</p>
               <p className="text-cyan-400 mt-2"># === Mining ===</p>
               <p className="text-emerald-400">gen=1</p>
               <p className="text-emerald-400">genproclimit=-1  <span className="text-gray-500"># -1 = semua CPU core</span></p>
@@ -505,7 +505,7 @@ export function Mining() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
               {[
-                { name: "GarudaPool Official", url: "stratum+tcp://pool.garudachain.id:3333", fee: "1%" },
+                { name: "GarudaPool Official", url: "stratum+tcp://pool.garudachain.org:3333", fee: "1%" },
                 { name: "NusantaraHash Pool", url: "stratum+tcp://nusantara.pool.id:3333", fee: "1.5%" },
                 { name: "RajaBlock Pool", url: "stratum+tcp://rajablock.pool.id:3333", fee: "2%" },
               ].map(pool => (
@@ -518,7 +518,7 @@ export function Mining() {
             </div>
             <div className="bg-gray-900 rounded-lg p-4 font-mono text-[12px] text-gray-300">
               <p className="text-gray-500 mb-1"># Contoh: Mining dengan cgminer ke pool</p>
-              <p className="text-emerald-400">$ cgminer -o stratum+tcp://pool.garudachain.id:3333 \</p>
+              <p className="text-emerald-400">$ cgminer -o stratum+tcp://pool.garudachain.org:3333 \</p>
               <p className="text-emerald-400">  -u grd1qYourAddress -p x --sha256d</p>
             </div>
           </div>
@@ -552,7 +552,7 @@ export function Mining() {
           </h3>
           <div className="bg-gray-900 rounded-lg p-4 font-mono text-[12px] text-gray-300">
             <p className="text-gray-500 mb-1"># 1. Download & install</p>
-            <p className="text-emerald-400">$ wget https://releases.garudachain.id/v1.0/garudachain-1.0-linux-x86_64.tar.gz</p>
+            <p className="text-emerald-400">$ wget https://releases.garudachain.org/v1.0/garudachain-1.0-linux-x86_64.tar.gz</p>
             <p className="text-emerald-400">$ tar -xzf garudachain-1.0-linux-x86_64.tar.gz && cd garudachain-1.0/bin/</p>
             <p className="text-gray-500 mt-3 mb-1"># 2. Start node & sync</p>
             <p className="text-emerald-400">$ ./garudad -daemon -addnode=103.144.213.11:9333</p>

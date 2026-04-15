@@ -7,7 +7,7 @@
 // Leave empty until mainnet/testnet seed nodes are provisioned.
 //
 // To add seeds after launch:
-//   1. Run seed nodes at seed.garudachain.id, seed2.garudachain.id
+//   1. Run seed nodes at seed.garudachain.org, seed2.garudachain.org
 //   2. Run contrib/seeds/generate-seeds.py against those nodes
 //   3. Replace the arrays below with the generated output
 

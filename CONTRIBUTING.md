@@ -158,7 +158,7 @@ Negative amounts passed through to the node produced an ambiguous
 
 **Do not open a public GitHub Issue for security vulnerabilities.**
 
-Report privately to: security@garudachain.id
+Report privately to: security@garudachain.org
 
 Include:
 - Description of the vulnerability

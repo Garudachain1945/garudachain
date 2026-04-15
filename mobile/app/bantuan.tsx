@@ -49,7 +49,7 @@ const FAQ = [
   },
   {
     q: "Bagaimana cara menghubungi dukungan?",
-    a: "Anda dapat menghubungi tim dukungan kami melalui tombol 'Hubungi Dukungan' di bawah, atau email ke support@garudachain.id. Tim kami siap membantu 24/7.",
+    a: "Anda dapat menghubungi tim dukungan kami melalui tombol 'Hubungi Dukungan' di bawah, atau email ke support@garudachain.org. Tim kami siap membantu 24/7.",
   },
 ];
 
@@ -156,14 +156,14 @@ export default function BantuanScreen() {
           <TouchableOpacity
             style={[styles.contactRow, styles.contactRowBorder]}
             activeOpacity={0.7}
-            onPress={() => Linking.openURL("mailto:support@garudachain.id?subject=Bantuan%20GarudaChain")}
+            onPress={() => Linking.openURL("mailto:support@garudachain.org?subject=Bantuan%20GarudaChain")}
           >
             <View style={[styles.contactIcon, { backgroundColor: "#627EEA20" }]}>
               <Ionicons name={"mail-outline" as IoniconName} size={20} color="#627EEA" />
             </View>
             <View style={styles.contactInfo}>
               <Text style={styles.contactLabel}>Email</Text>
-              <Text style={styles.contactDesc}>support@garudachain.id</Text>
+              <Text style={styles.contactDesc}>support@garudachain.org</Text>
             </View>
             <Ionicons name={"chevron-forward" as IoniconName} size={18} color={NEO_MUTED} />
           </TouchableOpacity>

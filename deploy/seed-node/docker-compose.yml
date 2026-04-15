@@ -4,9 +4,9 @@
 # Deploy on a VPS with a static IP.
 # The IP must match the NS glue record at your DNS registrar:
 #
-#   garudachain.id NS records:
-#     seed.garudachain.id.  NS  ns1.garudachain.id.
-#     ns1.garudachain.id.   A   <THIS SERVER'S IP>
+#   garudachain.org NS records:
+#     seed.garudachain.org.  NS  ns1.garudachain.org.
+#     ns1.garudachain.org.   A   <THIS SERVER'S IP>
 #
 # Usage:
 #   cp .env.example .env     # fill in SEEDER_HOST
@@ -46,7 +46,7 @@ services:
       timeout: 10s
       retries: 5
 
-  # ── DNS seeder (serves seed.garudachain.id) ──────────────────────────────
+  # ── DNS seeder (serves seed.garudachain.org) ──────────────────────────────
   seeder:
     build:
       context: ../../seeder
@@ -57,7 +57,7 @@ services:
       garudad:
         condition: service_healthy
     environment:
-      SEEDER_HOST: ${SEEDER_HOST:-seed.garudachain.id}
+      SEEDER_HOST: ${SEEDER_HOST:-seed.garudachain.org}
       SEEDER_BIND: "0.0.0.0:53"
       SEEDER_HTTP: "0.0.0.0:8080"
       SEEDER_NETWORK: mainnet

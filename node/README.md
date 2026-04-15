@@ -122,7 +122,7 @@ garuda-cli -regtest listassets
 See [SECURITY.md](../SECURITY.md) for the full threat model and security
 hardening documentation (12 passes, 99.99% testnet coverage).
 
-Report vulnerabilities privately to: security@garudachain.id
+Report vulnerabilities privately to: security@garudachain.org
 
 ## License
 

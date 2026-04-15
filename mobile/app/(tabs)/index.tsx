@@ -56,7 +56,7 @@ const TERMS_SECTIONS = [
   },
   {
     title: "9. Hubungi Kami",
-    body: "Jika Anda memiliki pertanyaan mengenai Syarat & Ketentuan ini, silakan hubungi kami melalui:\nEmail: support@garudachain.id\nWebsite: www.garudachain.id",
+    body: "Jika Anda memiliki pertanyaan mengenai Syarat & Ketentuan ini, silakan hubungi kami melalui:\nEmail: support@garudachain.org\nWebsite: www.garudachain.org",
   },
 ];
 

@@ -77,7 +77,7 @@ export function MinerMining() {
           </div>
           <div className="px-5 pb-5 space-y-4">
             <CodeBlock
-              code={`wget -O ~/bin/garuda-miner https://garudachain.id/downloads/garuda-miner && chmod +x ~/bin/garuda-miner`}
+              code={`wget -O ~/bin/garuda-miner https://garudachain.org/downloads/garuda-miner && chmod +x ~/bin/garuda-miner`}
             />
             <div className="bg-gray-50 border rounded-lg p-4 text-sm text-gray-600">
               <p>Script ini akan otomatis mendownload semua yang diperlukan:</p>

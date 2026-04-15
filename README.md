@@ -230,7 +230,7 @@ GarudaChain went through a 12-pass security hardening process covering:
 - ML-DSA-87 post-quantum signature verification at consensus level
 
 See [SECURITY.md](SECURITY.md) for the complete threat model, findings, and
-mitigations. Report vulnerabilities privately to: security@garudachain.id
+mitigations. Report vulnerabilities privately to: security@garudachain.org
 
 ---
 

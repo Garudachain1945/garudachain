@@ -251,7 +251,7 @@ Set these in your service environment file (systemd unit, k8s secret, etc):
 ```bash
 GARUDA_STRICT=1
 GARUDA_BIND=127.0.0.1                       # never expose directly; use nginx
-GARUDA_ALLOWED_ORIGINS=https://app.garudachain.id,https://dex.garudachain.id
+GARUDA_ALLOWED_ORIGINS=https://app.garudachain.org,https://dex.garudachain.org
 GARUDA_ADMIN_KEY=$(openssl rand -hex 32)
 GARUDA_RPC_PASS_CBDC=$(openssl rand -hex 24)
 GARUDA_RPC_PASS_PUBLIC=$(openssl rand -hex 24)

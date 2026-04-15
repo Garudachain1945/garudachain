@@ -157,8 +157,8 @@ public:
         assert(genesis.hashMerkleRoot == uint256{"89007043e5dc20de38b48768cf9f2bf3adb58a1de9f37729e29f734cac5cbd3b"});
 
         // DNS seeds — add garuda.id seed nodes after mainnet launch
-        vSeeds.emplace_back("seed.garudachain.id.");
-        vSeeds.emplace_back("seed2.garudachain.id.");
+        vSeeds.emplace_back("seed.garudachain.org.");
+        vSeeds.emplace_back("seed2.garudachain.org.");
 
         // GRD mainnet address prefixes
         // base58: version byte 38 → P2PKH addresses start with "G"
@@ -253,7 +253,7 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        vSeeds.emplace_back("testnet-seed.garudachain.id.");
+        vSeeds.emplace_back("testnet-seed.garudachain.org.");
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 111);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 196);
@@ -339,7 +339,7 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        vSeeds.emplace_back("testnet4-seed.garudachain.id.");
+        vSeeds.emplace_back("testnet4-seed.garudachain.org.");
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 111);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 196);

@@ -58,7 +58,7 @@ sudo systemctl enable --now garudad-cbdc garudaapi
 # 7. nginx + TLS
 sudo cp nginx-garudachain.conf /etc/nginx/sites-available/garudachain
 sudo ln -sf ../sites-available/garudachain /etc/nginx/sites-enabled/
-sudo certbot --nginx -d api.garudachain.id
+sudo certbot --nginx -d api.garudachain.org
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
@@ -73,17 +73,17 @@ journalctl -u garudaapi -n 50 --no-pager
 journalctl -u garudaapi --since '5 min ago' | grep -i 'SECURITY WARN'
 
 # Health check via nginx (TLS)
-curl -sS https://api.garudachain.id/api/healthz
+curl -sS https://api.garudachain.org/api/healthz
 
 # Admin endpoint should 401 without a key
 curl -sS -o /dev/null -w '%{http_code}\n' -X POST \
-  https://api.garudachain.id/api/dex/qris/confirm \
+  https://api.garudachain.org/api/dex/qris/confirm \
   -H 'Content-Type: application/json' -d '{"id":"x"}'
 
 # Rate limit on admin (should hit 429 after a few bursts)
 for i in $(seq 1 10); do
   curl -sS -o /dev/null -w '%{http_code} ' -X POST \
-    https://api.garudachain.id/api/dex/qris/confirm \
+    https://api.garudachain.org/api/dex/qris/confirm \
     -H 'Content-Type: application/json' -d '{"id":"x","admin_key":"wrong"}'
 done; echo
 ```
@@ -124,24 +124,24 @@ sudo -u garuda /opt/garudachain/wallets/garuda-cli \
 GarudaChain nodes find each other via DNS seeds configured in `chainparams.cpp`:
 
 ```
-mainnet:  seed.garudachain.id.   seed2.garudachain.id.
-testnet:  testnet-seed.garudachain.id.
+mainnet:  seed.garudachain.org.   seed2.garudachain.org.
+testnet:  testnet-seed.garudachain.org.
 ```
 
 ### Requirements
 
 - A VPS with a **static public IP** and ports **6300/tcp** (P2P) and **53/udp+tcp** (DNS) open
-- Domain control over `garudachain.id` to add NS glue records
+- Domain control over `garudachain.org` to add NS glue records
 
 ### Step 1 — Add NS glue records at your registrar
 
 ```
 # At your DNS registrar (e.g. Cloudflare, Namecheap):
-seed.garudachain.id.  NS   ns1.garudachain.id.
-ns1.garudachain.id.   A    <YOUR_SERVER_IP>
+seed.garudachain.org.  NS   ns1.garudachain.org.
+ns1.garudachain.org.   A    <YOUR_SERVER_IP>
 ```
 
-Repeat for `seed2.garudachain.id` → `ns2.garudachain.id` if running a second server.
+Repeat for `seed2.garudachain.org` → `ns2.garudachain.org` if running a second server.
 
 ### Step 2 — Deploy with Docker Compose
 
@@ -154,7 +154,7 @@ cp .env.example .env
 # Edit .env:
 #   SEED_NODE_IP=<this server's public IP>
 #   GARUDA_RPC_PASS=<openssl rand -hex 24>
-#   SEEDER_HOST=seed.garudachain.id
+#   SEEDER_HOST=seed.garudachain.org
 
 # Create data directory
 sudo mkdir -p /var/lib/garudachain/mainnet
@@ -168,8 +168,8 @@ docker-compose logs -f
 
 ```bash
 # From another machine (allow 24-48h for DNS propagation):
-dig seed.garudachain.id A
-nslookup seed.garudachain.id <YOUR_SERVER_IP>
+dig seed.garudachain.org A
+nslookup seed.garudachain.org <YOUR_SERVER_IP>
 
 # Check seeder status:
 curl http://<YOUR_SERVER_IP>:8080/

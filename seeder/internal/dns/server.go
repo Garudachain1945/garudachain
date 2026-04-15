@@ -23,7 +23,7 @@ type NodeSource interface {
 // Server is a minimal UDP DNS server (RFC 1035).
 type Server struct {
 	addr   string // bind address e.g. "0.0.0.0:53"
-	host   string // the hostname to answer, e.g. "seed.garudachain.id."
+	host   string // the hostname to answer, e.g. "seed.garudachain.org."
 	source NodeSource
 
 	mu     sync.Mutex
