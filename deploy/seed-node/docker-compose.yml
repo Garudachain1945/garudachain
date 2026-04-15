@@ -1,0 +1,78 @@
+# deploy/seed-node/docker-compose.yml
+# GarudaChain seed node + DNS seeder stack.
+#
+# Deploy on a VPS with a static IP.
+# The IP must match the NS glue record at your DNS registrar:
+#
+#   garudachain.id NS records:
+#     seed.garudachain.id.  NS  ns1.garudachain.id.
+#     ns1.garudachain.id.   A   <THIS SERVER'S IP>
+#
+# Usage:
+#   cp .env.example .env     # fill in SEEDER_HOST
+#   docker-compose up -d
+
+version: "3.8"
+
+services:
+  # ── GarudaChain mainnet node ─────────────────────────────────────────────
+  garudad:
+    image: garudachain/garudad:latest
+    container_name: garudad-seed
+    restart: unless-stopped
+    command: >
+      garudad
+        -server
+        -listen
+        -discover
+        -externalip=${SEED_NODE_IP}
+        -maxconnections=125
+        -dbcache=512
+        -txindex=0
+        -prune=0
+        -rpcuser=${GARUDA_RPC_USER}
+        -rpcpassword=${GARUDA_RPC_PASS}
+        -rpcbind=127.0.0.1
+        -rpcport=6301
+        -rpcallowip=127.0.0.1
+        -datadir=/data
+    ports:
+      - "6300:6300"    # P2P — must be open to internet
+    volumes:
+      - garudad-data:/data
+    healthcheck:
+      test: garuda-cli -rpcuser=${GARUDA_RPC_USER} -rpcpassword=${GARUDA_RPC_PASS} getblockchaininfo
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ── DNS seeder (serves seed.garudachain.id) ──────────────────────────────
+  seeder:
+    build:
+      context: ../../seeder
+      dockerfile: Dockerfile
+    container_name: garuda-seeder
+    restart: unless-stopped
+    depends_on:
+      garudad:
+        condition: service_healthy
+    environment:
+      SEEDER_HOST: ${SEEDER_HOST:-seed.garudachain.id}
+      SEEDER_BIND: "0.0.0.0:53"
+      SEEDER_HTTP: "0.0.0.0:8080"
+      SEEDER_NETWORK: mainnet
+      SEEDER_BOOTSTRAP: "garudad:6300"
+    ports:
+      - "53:53/udp"    # DNS — must be open to internet
+      - "53:53/tcp"    # DNS over TCP
+      - "8080:8080"    # HTTP status (restrict to monitoring IP in production)
+    cap_add:
+      - NET_BIND_SERVICE
+
+volumes:
+  garudad-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /var/lib/garudachain/mainnet
+      o: bind

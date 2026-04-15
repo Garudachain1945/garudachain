@@ -1,0 +1,71 @@
+[Unit]
+Description=GarudaChain HTTP API (garudaapi)
+Documentation=https://github.com/garudachain/garudachain
+After=network-online.target garudad-cbdc.service garudad-public.service garudad-creator.service
+Wants=network-online.target
+Requires=garudad-cbdc.service garudad-public.service garudad-creator.service
+
+[Service]
+Type=simple
+User=garuda
+Group=garuda
+
+# All secrets are read from this file. chmod 600 and own root:garuda.
+EnvironmentFile=/etc/garudaapi/garudaapi.env
+
+# Working directory contains the binary and the `static/` assets it serves.
+WorkingDirectory=/opt/garudachain/api
+ExecStart=/opt/garudachain/api/garudaapi
+
+# Restart with backoff on crash, but cap to prevent flapping.
+Restart=on-failure
+RestartSec=5s
+StartLimitBurst=5
+StartLimitIntervalSec=60
+
+# ── Hardening ───────────────────────────────────────────────────────────
+# systemd sandboxing — defense in depth. The API doesn't need most of
+# the system, so deny it everything and add back only what it uses.
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectHostname=true
+ProtectClock=true
+ProtectProc=invisible
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @mount @reboot @swap @debug
+
+# Only allow writing to these specific paths — the API stores asset
+# metadata and logos under its working directory.
+ReadWritePaths=/opt/garudachain/api/static /var/log/garudaapi
+
+# No network namespacing — the API needs to talk to the three local
+# bitcoind RPC ports.
+# Allow only IPv4/IPv6 loopback + unix. Adjust if external egress needed.
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+# ── Resource limits ─────────────────────────────────────────────────────
+LimitNOFILE=65535
+LimitNPROC=4096
+MemoryMax=2G
+TasksMax=1024
+
+# Log to journal with the service's unit name as the identifier.
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=garudaapi
+
+[Install]
+WantedBy=multi-user.target

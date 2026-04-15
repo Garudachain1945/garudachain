@@ -1,0 +1,104 @@
+# docker-compose.ci.yml — ephemeral regtest environment for the
+# GarudaChain API integration test suite.
+#
+# NOTE: the credentials below are intentionally hardcoded because this
+# stack runs only on regtest inside a disposable docker network and never
+# binds to a public interface. DO NOT reuse these values in any
+# non-regtest deployment. For dev stacks use docker-compose.yml + .env.
+#
+# Usage (local):
+#   docker-compose -f docker-compose.ci.yml up -d
+#   GARUDA_TEST_PORT=5098 go test -tags=integration ./api/...
+#   docker-compose -f docker-compose.ci.yml down -v
+#
+# In GitHub Actions the `integration` job in ci.yml uses the
+# `services:` block which pulls the same bitcoind image; this file
+# is the local equivalent that developers can run before pushing.
+#
+# Wallets and initial block mining are handled by the `init` service
+# which runs once, funds the cbdc-authority wallet, and exits.
+
+version: "3.8"
+
+services:
+  garudad:
+    image: lncm/bitcoind:v26.0
+    container_name: garudad-regtest
+    restart: unless-stopped
+    command: >
+      bitcoind
+        -regtest
+        -server
+        -rpcuser=garudacbdc
+        -rpcpassword=garudacbdc123
+        -rpcallowip=0.0.0.0/0
+        -rpcbind=0.0.0.0
+        -rpcport=18443
+        -fallbackfee=0.0001
+        -txindex=1
+        -wallet=cbdc-authority
+        -wallet=public
+        -wallet=creator
+    ports:
+      - "19443:18443"
+    healthcheck:
+      test: >
+        bitcoin-cli -regtest
+          -rpcuser=garudacbdc -rpcpassword=garudacbdc123
+          getblockchaininfo
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  init:
+    image: lncm/bitcoind:v26.0
+    container_name: garudad-init
+    depends_on:
+      garudad:
+        condition: service_healthy
+    restart: "no"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        CLI="bitcoin-cli -regtest -rpcuser=garudacbdc -rpcpassword=garudacbdc123 -rpcconnect=garudad"
+        # Create wallets if they don't exist yet.
+        $CLI createwallet cbdc-authority 2>/dev/null || true
+        $CLI createwallet public          2>/dev/null || true
+        $CLI createwallet creator         2>/dev/null || true
+        # Mine 101 blocks to make coinbase spendable.
+        ADDR=$($CLI -rpcwallet=cbdc-authority getnewaddress)
+        $CLI generatetoaddress 101 "$ADDR"
+        echo "Init complete. cbdc-authority funded at $ADDR"
+
+  # Optional: the GarudaAPI itself, for manual smoke-testing.
+  # Not used by the automated integration tests (they build their
+  # own binary with `go build`).
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: garudaapi
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    environment:
+      GARUDA_BIND: "0.0.0.0"
+      GARUDA_RPC_USER_CBDC: garudacbdc
+      GARUDA_RPC_PASS_CBDC: garudacbdc123
+      GARUDA_RPC_USER_PUBLIC: garudapublic
+      GARUDA_RPC_PASS_PUBLIC: garudapublic123
+      GARUDA_RPC_USER_CREATOR: garudacreator
+      GARUDA_RPC_PASS_CREATOR: garudacreator123
+      GARUDA_ADMIN_KEY: "garuda-local-dev-key-change-for-production"
+      GARUDA_AUDIT_FILE: /data/audit.log
+      GARUDA_STRICT: "0"
+    ports:
+      - "5098:5098"
+    volumes:
+      - api-data:/data
+    profiles:
+      - full  # Only started with: docker-compose --profile full up
+
+volumes:
+  api-data:

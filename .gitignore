@@ -1,0 +1,170 @@
+# ── OS / editor ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.code-workspace
+
+# ── Secrets / keys — NEVER commit these ──────────────────────────────────────
+*.enc
+*.key
+*.pem
+*.p12
+*.pfx
+.env
+.env.local
+.env.*.local
+**/secrets/
+garuda_master.key
+admin.key
+
+# ── Node (Bitcoin Core fork) ──────────────────────────────────────────────────
+node/src/config.h
+node/src/config/
+node/build/
+node/autom4te.cache/
+node/aclocal.m4
+node/configure
+node/Makefile
+node/Makefile.in
+node/libtool
+node/.deps/
+node/.libs/
+node/src/.deps/
+node/src/.libs/
+node/src/**/.deps/
+node/src/**/.libs/
+node/src/test/test_bitcoin
+node/src/test/test_bitcoin_fuzzy
+node/src/qt/test/test_bitcoin-qt
+node/garudad
+node/garuda-cli
+node/garuda-wallet
+node/garuda-tx
+node/garuda-util
+node/garuda-qt
+# Built binaries land in node/src/ under autotools build
+node/src/garudad
+node/src/garuda-cli
+node/src/garuda-wallet
+node/src/garuda-tx
+node/src/garuda-util
+node/src/garuda-qt
+node/src/qt/garuda-qt
+# Test binaries
+node/src/test/test_bitcoin
+node/src/test/fuzz/fuzz
+node/src/bench/bench_bitcoin
+node/*.o
+node/**/*.o
+node/**/*.a
+node/**/*.so
+node/**/*.la
+node/**/*.lo
+node/**/*.Plo
+node/share/genbuild.sh
+
+# ── Go (API server + indexer) ─────────────────────────────────────────────────
+api/garudaapi
+api/garuda-api
+api/garudachain-api
+# Old binary name
+api/api
+# Release backups (garudaapi.v2-backup, garudaapi.v3.2, etc.)
+api/garudaapi.v*
+api/*.backup
+api/*.log
+# Uploads dir (trailing slash so it doesn't collide with the 'api/api' binary rule)
+api/static/uploads/
+indexer/garudaindexer
+indexer/indexer
+indexer/*.log
+
+# ── DEX archive (kept for reference only — do not commit build artifacts) ────
+dex-archive/*/node_modules/
+dex-archive/*/.next/
+dex-archive/*/dist/
+dex-archive/*/build/
+dex-archive/*/.git/
+# Entire nested git repo — keep out of history
+dex-archive/dex-next/
+
+# ── Claude Code harness state ────────────────────────────────────────────────
+.claude/scheduled_tasks.lock
+.claude/memory/
+
+# ── Node.js / pnpm ────────────────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.yarn/
+.npm/
+
+# ── Build outputs ─────────────────────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+.vercel/
+.netlify/
+
+# ── Mobile (Expo / React Native) ──────────────────────────────────────────────
+mobile/.expo/
+mobile/android/
+mobile/ios/
+mobile/*.jks
+mobile/*.keystore
+mobile/static-build/
+mobile/dist/
+
+# ── Browser extension ─────────────────────────────────────────────────────────
+extension/dist/
+
+# ── Website ───────────────────────────────────────────────────────────────────
+website/dist/
+website/.vite/
+
+# ── DEX ───────────────────────────────────────────────────────────────────────
+dex-archive/dex/dist/
+dex-archive/dex-next/.next/
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+.docker/
+docker-compose.override.yml
+
+# ── Wallets / test data — do not commit real wallets ─────────────────────────
+wallets/
+*.dat
+wallet.dat
+
+# ── Miner binaries ────────────────────────────────────────────────────────────
+miner/garuda-gpu-miner
+miner/garuda-cpu-miner
+miner/*.o
+
+# ── Stray .bak / .old files ──────────────────────────────────────────────────
+*.bak
+*.old
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── TypeScript ────────────────────────────────────────────────────────────────
+*.tsbuildinfo
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+venv/
+.venv/

@@ -1,0 +1,58 @@
+[Unit]
+Description=GarudaChain CBDC Node (garudad -walletmode=cbdc)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+User=garuda
+Group=garuda
+
+# Data directory holds the chain, wallets, and bitcoin.conf (rpcpassword
+# lives there; MUST be chmod 600).
+Environment=DATADIR=/var/lib/garudachain-cbdc
+PIDFile=/var/lib/garudachain-cbdc/garudad.pid
+
+ExecStart=/opt/garudachain/wallets/garudad \
+    -datadir=${DATADIR} \
+    -pid=${DATADIR}/garudad.pid \
+    -daemon \
+    -walletmode=cbdc
+
+# Graceful stop: ask bitcoind to stop, wait for pidfile to go away.
+ExecStop=/opt/garudachain/wallets/garuda-cli -datadir=${DATADIR} stop
+TimeoutStopSec=300
+KillMode=process
+
+Restart=on-failure
+RestartSec=10s
+
+# Hardening (same principles as garudaapi.service)
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+LockPersonality=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @mount @reboot @swap
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+ReadWritePaths=/var/lib/garudachain-cbdc
+
+LimitNOFILE=65535
+MemoryMax=8G
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=garudad-cbdc
+
+[Install]
+WantedBy=multi-user.target

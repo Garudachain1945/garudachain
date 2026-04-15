@@ -1,0 +1,14 @@
+packages:
+  "framer-motion": "For fluid page transitions, staggered list animations, and interactive component states"
+  "date-fns": "For formatting blockchain timestamps into human-readable relative times"
+  "clsx": "For conditional class name merging"
+  "tailwind-merge": "For resolving Tailwind class conflicts"
+
+images:
+  - path: "artifacts/garudachain-explorer/public/images/hero-bg.png"
+    description: "Abstract, modern dark geometric background featuring subtle deep crimson red accents and soft golden lighting, tech and blockchain vibe, 3D abstract shapes"
+    aspect_ratio: "16:9"
+
+notes:
+  - All API calls use the generated hooks from @workspace/api-client-react.
+  - The search functionality directly uses the exported `search` function to perform imperative routing based on the result type.

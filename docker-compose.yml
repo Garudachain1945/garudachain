@@ -1,0 +1,137 @@
+# docker-compose.yml — GarudaChain local development stack
+#
+# Starts the full stack on your laptop in one command:
+#   docker-compose up -d
+#
+# Services:
+#   garudad   — GarudaChain node (regtest mode)
+#   init      — One-shot wallet setup + initial mining
+#   api       — GarudaAPI server (port 5098)
+#   indexer   — Block indexer (connects to garudad + api)
+#
+# For the CI integration test environment see docker-compose.ci.yml.
+
+version: "3.8"
+
+services:
+  # ── GarudaChain node (regtest) ─────────────────────────────────────────
+  garudad:
+    image: lncm/bitcoind:v26.0
+    container_name: garudad-dev
+    restart: unless-stopped
+    command: >
+      bitcoind
+        -regtest
+        -server
+        -rpcuser=${GARUDA_RPC_USER_CBDC:?set GARUDA_RPC_USER_CBDC in .env}
+        -rpcpassword=${GARUDA_RPC_PASS_CBDC:?set GARUDA_RPC_PASS_CBDC in .env}
+        -rpcallowip=0.0.0.0/0
+        -rpcbind=0.0.0.0
+        -rpcport=18443
+        -fallbackfee=0.0001
+        -txindex=1
+        -wallet=cbdc-authority
+        -wallet=public
+        -wallet=creator
+    ports:
+      - "18443:18443"   # RPC
+      - "18444:18444"   # P2P (regtest)
+    volumes:
+      - garudad-data:/root/.bitcoin
+    healthcheck:
+      test: >
+        bitcoin-cli -regtest
+          -rpcuser=${GARUDA_RPC_USER_CBDC} -rpcpassword=${GARUDA_RPC_PASS_CBDC}
+          getblockchaininfo
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # ── One-shot wallet init ───────────────────────────────────────────────
+  init:
+    image: lncm/bitcoind:v26.0
+    container_name: garudad-dev-init
+    depends_on:
+      garudad:
+        condition: service_healthy
+    restart: "no"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        CLI="bitcoin-cli -regtest -rpcuser=${GARUDA_RPC_USER_CBDC} -rpcpassword=${GARUDA_RPC_PASS_CBDC} -rpcconnect=garudad"
+        $CLI createwallet cbdc-authority 2>/dev/null || true
+        $CLI createwallet public          2>/dev/null || true
+        $CLI createwallet creator         2>/dev/null || true
+        ADDR=$($CLI -rpcwallet=cbdc-authority getnewaddress)
+        $CLI generatetoaddress 101 "$$ADDR"
+        echo "[init] Done — cbdc-authority funded at $$ADDR"
+
+  # ── GarudaAPI server ───────────────────────────────────────────────────
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: garudaapi-dev
+    restart: unless-stopped
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    environment:
+      GARUDA_BIND: "0.0.0.0"
+      PORT: "5098"
+      GARUDA_STRICT: "0"
+      GARUDA_RPC_USER_CBDC: ${GARUDA_RPC_USER_CBDC}
+      GARUDA_RPC_PASS_CBDC: ${GARUDA_RPC_PASS_CBDC}
+      GARUDA_RPC_HOST_CBDC: garudad
+      GARUDA_RPC_PORT_CBDC: "18443"
+      GARUDA_RPC_USER_PUBLIC: ${GARUDA_RPC_USER_CBDC}
+      GARUDA_RPC_PASS_PUBLIC: ${GARUDA_RPC_PASS_CBDC}
+      GARUDA_RPC_HOST_PUBLIC: garudad
+      GARUDA_RPC_PORT_PUBLIC: "18443"
+      GARUDA_RPC_USER_CREATOR: ${GARUDA_RPC_USER_CBDC}
+      GARUDA_RPC_PASS_CREATOR: ${GARUDA_RPC_PASS_CBDC}
+      GARUDA_RPC_HOST_CREATOR: garudad
+      GARUDA_RPC_PORT_CREATOR: "18443"
+      GARUDA_ADMIN_KEY: ${GARUDA_ADMIN_KEY:?set GARUDA_ADMIN_KEY in .env}
+      GARUDA_AUDIT_FILE: /data/audit.log
+    ports:
+      - "5098:5098"
+    volumes:
+      - api-data:/data
+
+  # ── Block indexer ──────────────────────────────────────────────────────
+  indexer:
+    build:
+      context: ./indexer
+      dockerfile: Dockerfile
+    container_name: garudaindexer-dev
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_started
+    environment:
+      GARUDA_RPC_URL: "http://${GARUDA_RPC_USER_CBDC}:${GARUDA_RPC_PASS_CBDC}@garudad:18443"
+      GARUDA_API_URL: "http://api:5098"
+      DB_PATH: /data/indexer.db
+    volumes:
+      - indexer-data:/data
+
+  # ── Explorer (website) ─────────────────────────────────────────────────
+  website:
+    build:
+      context: ./website
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: "http://localhost:5098"
+    container_name: garudawebsite-dev
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+
+volumes:
+  garudad-data:
+  api-data:
+  indexer-data:

@@ -1,0 +1,31 @@
+# CODEOWNERS — reviewers are auto-assigned based on path.
+# Format: <pattern> <owner> [<owner>...]
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default: all files require a maintainer review
+*                               @garudachain/maintainers
+
+# Node (consensus-critical — two maintainers required)
+/node/src/kernel/chainparams*   @garudachain/maintainers @garudachain/core
+/node/src/consensus/            @garudachain/maintainers @garudachain/core
+/node/src/validation*           @garudachain/maintainers @garudachain/core
+/node/src/pqc/                  @garudachain/maintainers @garudachain/core
+
+# API server
+/api/                           @garudachain/maintainers @garudachain/api
+
+# Security-sensitive API files
+/api/admin_key*.go              @garudachain/maintainers
+/api/key_provider.go            @garudachain/maintainers
+/api/security.go                @garudachain/maintainers
+/api/audit_chain.go             @garudachain/maintainers
+/SECURITY.md                    @garudachain/maintainers
+
+# Infrastructure / deploy
+/deploy/                        @garudachain/maintainers @garudachain/infra
+/docker-compose*.yml            @garudachain/maintainers @garudachain/infra
+
+# Frontend / mobile
+/website/                       @garudachain/frontend
+/mobile/                        @garudachain/frontend
+/extension/                     @garudachain/frontend

@@ -1,0 +1,197 @@
+# GarudaChain API CI pipeline — Pass #10.
+#
+# Runs on every push and every pull request to main or release/*.
+# All jobs must pass before merge. Go version pinned to 1.24.x to
+# close the 26 stdlib CVEs reported by govulncheck against 1.22.2
+# (the dev machine toolchain). See §18.1 of SECURITY.md.
+#
+# Jobs:
+#  1. build            — compile the api package.
+#  2. vet              — go vet.
+#  3. unit             — go test -race -count=1.
+#  4. fuzz-short       — 30s per fuzz target.
+#  5. gosec            — static analysis, fails on HIGH.
+#  6. govulncheck      — CVE scan against Go vuln DB.
+#  7. integration      — live suite against a regtest garudad spun
+#                        up via docker-compose. Runs on every push
+#                        to main (not PRs, to conserve runner minutes).
+
+name: garuda-api-ci
+
+on:
+  push:
+    branches: [main, 'release/**']
+    paths:
+      - 'api/**'
+      - '.github/workflows/ci.yml'
+      - 'docker-compose.ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - '.github/workflows/ci.yml'
+
+permissions:
+  contents: read
+
+env:
+  GO_VERSION: '1.24.x'
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: api/go.sum
+      - name: build
+        working-directory: api
+        run: go build ./...
+
+  vet:
+    name: vet
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: api/go.sum
+      - name: vet
+        working-directory: api
+        run: go vet ./...
+
+  unit:
+    name: unit + race
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: api/go.sum
+      - name: test-race
+        working-directory: api
+        run: go test -race -count=1 -timeout=5m ./...
+
+  fuzz-short:
+    name: fuzz (short)
+    runs-on: ubuntu-latest
+    needs: unit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: api/go.sum
+      - name: fuzz-witness-codec
+        working-directory: api
+        run: go test -run='^$' -fuzz=FuzzWitnessPayloadRoundtrip -fuzztime=30s ./...
+      - name: fuzz-witness-seq-boundary
+        working-directory: api
+        run: go test -run='^$' -fuzz=FuzzWitnessPayloadSeqBoundary -fuzztime=30s ./...
+      - name: fuzz-admin-replay
+        working-directory: api
+        run: go test -run='^$' -fuzz=FuzzCheckAdminReplay -fuzztime=30s ./...
+
+  gosec:
+    name: gosec
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: api/go.sum
+      - name: install-gosec
+        run: go install github.com/securego/gosec/v2/cmd/gosec@latest
+      - name: gosec-high
+        working-directory: api
+        # Fail on HIGH severity. MEDIUM/LOW tracked but allowed to
+        # avoid bech32 G115 false-positive noise.
+        run: $HOME/go/bin/gosec -severity=high -confidence=medium -quiet ./...
+
+  govulncheck:
+    name: govulncheck
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: api/go.sum
+      - name: install-govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - name: govulncheck
+        working-directory: api
+        # govulncheck only fails on vulnerabilities that are reachable
+        # from the call graph — transitive deps that are imported but
+        # whose vulnerable code paths are never called are reported but
+        # don't fail the job. Using Go 1.24.x closes all 26 stdlib CVEs
+        # that affected 1.22.2 on the dev machine.
+        run: $HOME/go/bin/govulncheck ./...
+
+  integration:
+    name: integration (live regtest)
+    runs-on: ubuntu-latest
+    needs: unit
+    # Run on pushes to main only — not on PRs, to avoid burning
+    # runner minutes on every proposed commit.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    services:
+      # Spin up Bitcoin Core (used as Garuda Core stand-in) in regtest.
+      # The garudad binary would replace this in a full CI environment;
+      # this service gives the integration tests a working RPC endpoint.
+      # Credentials below are intentionally hardcoded because the service
+      # only binds to the ephemeral CI runner network (regtest). These
+      # are NOT valid credentials for any non-regtest deployment.
+      bitcoin-regtest:
+        image: lncm/bitcoind:v26.0
+        options: >-
+          --health-cmd "bitcoin-cli -regtest -rpcuser=garudacbdc -rpcpassword=garudacbdc123 getblockchaininfo"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+        env:
+          BITCOIN_DATA: /tmp/bitcoin-regtest
+        ports:
+          - 19443:18443
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+          cache-dependency-path: api/go.sum
+      - name: build-api
+        working-directory: api
+        run: go build -o /tmp/garudaapi .
+      - name: wait-for-rpc
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf -u garudacbdc:garudacbdc123 \
+              -d '{"jsonrpc":"1.0","method":"getblockchaininfo"}' \
+              http://127.0.0.1:19443/ && break
+            sleep 2
+          done
+      - name: integration-tests
+        working-directory: api
+        env:
+          GARUDA_TEST_PORT: "5098"
+          GARUDA_TEST_RPC_URL: "http://127.0.0.1:19443"
+          GARUDA_ADMIN_KEY: "garuda-ci-integration-test-key-2026"
+          GARUDA_AUDIT_FILE: "/tmp/garuda-ci-audit.log"
+        run: go test -tags=integration -v -timeout=120s ./...

@@ -1,0 +1,231 @@
+/* MetaMask visual style — GarudaChain edition */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* brand */
+  --primary:       #8B0000;
+  --primary-hover: #6d0000;
+  --primary-muted: rgba(139,0,0,.12);
+  --primary-bg:    #fff5f5;
+
+  /* neutrals — same as MetaMask design tokens */
+  --bg:        #ffffff;
+  --bg-alt:    #f2f4f6;
+  --bg-card:   #f8f8f8;
+  --border:    #bbc0c5;
+  --border-2:  #d6d9dc;
+
+  /* text */
+  --t1: #24272a;
+  --t2: #535a61;
+  --t3: #848c96;
+
+  /* status */
+  --success:    #1a8a4a;
+  --success-bg: #e8f5e9;
+  --warning:    #f6851b;
+  --error:      #d73847;
+  --error-bg:   #fef3f2;
+
+  /* radius */
+  --r-xs: 4px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-pill: 100px;
+
+  /* shadow */
+  --s-sm: 0 1px 3px rgba(0,0,0,.08);
+  --s-md: 0 4px 14px rgba(0,0,0,.10);
+  --s-brand: 0 4px 14px rgba(139,0,0,.30);
+}
+
+html, body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--t1);
+  background: var(--bg);
+  width: 360px;
+  min-height: 600px;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  width: 360px;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ── Elements ──────────────────────────────────────────────────────────── */
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  transition: background .15s, opacity .15s, transform .1s;
+}
+button:not(:disabled):active { transform: scale(.97); }
+button:disabled { opacity: .4; cursor: not-allowed; }
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--t1);
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+input:focus, textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-muted);
+}
+input::placeholder, textarea::placeholder { color: var(--t3); }
+
+/* ── Button variants ───────────────────────────────────────────────────── */
+
+.mm-btn {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; border-radius: var(--r-pill);
+  font-weight: 700; font-size: 15px;
+  padding: 13px 20px; width: 100%;
+  letter-spacing: .01em;
+}
+.mm-btn-primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: var(--s-brand);
+}
+.mm-btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+
+.mm-btn-secondary {
+  background: var(--bg);
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+.mm-btn-secondary:hover:not(:disabled) { background: var(--primary-bg); }
+
+.mm-btn-ghost {
+  background: var(--bg-alt);
+  color: var(--t1);
+  font-weight: 600;
+}
+.mm-btn-ghost:hover:not(:disabled) { background: var(--border-2); }
+
+/* small action button */
+.mm-btn-sm {
+  border-radius: var(--r-sm);
+  padding: 8px 14px;
+  font-size: 13px; font-weight: 600;
+  width: auto;
+}
+
+/* ── Form elements ─────────────────────────────────────────────────────── */
+
+.mm-field { display: flex; flex-direction: column; gap: 6px; }
+.mm-label {
+  font-size: 12px; font-weight: 600;
+  color: var(--t2); letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.mm-input {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: var(--r-sm);
+  font-size: 14px;
+}
+.mm-hint  { font-size: 11px; color: var(--t3); }
+.mm-error { font-size: 11px; color: var(--error); font-weight: 500; }
+
+.mm-textarea {
+  width: 100%; resize: none;
+  padding: 11px 14px;
+  border-radius: var(--r-sm);
+  font-size: 13px; line-height: 1.7;
+}
+
+/* ── Cards / banners ───────────────────────────────────────────────────── */
+
+.mm-card {
+  background: var(--bg-alt);
+  border-radius: var(--r-md);
+  padding: 14px;
+}
+
+.mm-banner {
+  display: flex; gap: 10px;
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  font-size: 12px; line-height: 1.6;
+}
+.mm-banner-warn {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+}
+.mm-banner-success {
+  background: var(--success-bg);
+  border: 1px solid #a5d6a7;
+  color: #1b5e20;
+}
+.mm-banner-error {
+  background: var(--error-bg);
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+/* ── Page layout ───────────────────────────────────────────────────────── */
+
+.mm-page {
+  display: flex; flex-direction: column;
+  min-height: 600px;
+  padding: 20px 20px 24px;
+  gap: 16px;
+}
+
+.mm-page-header {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 2px;
+}
+.mm-page-title { font-size: 18px; font-weight: 700; color: var(--t1); }
+
+.mm-back {
+  width: 34px; height: 34px; flex-shrink: 0;
+  border-radius: var(--r-sm);
+  background: var(--bg-alt);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--t2); font-size: 17px;
+}
+.mm-back:hover { background: var(--border-2); }
+
+.mm-body { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+.mm-footer { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+
+.mm-divider {
+  height: 1px;
+  background: var(--border-2);
+  margin: 4px 0;
+}
+
+/* ── Password strength ─────────────────────────────────────────────────── */
+
+.pw-strength { display: flex; gap: 4px; margin-top: 4px; }
+.pw-strength-bar {
+  flex: 1; height: 4px;
+  border-radius: 4px;
+  background: var(--border-2);
+  transition: background .3s;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 4px; }
