@@ -6,6 +6,8 @@ GarudaChain is a Bitcoin Core v28.1.0 fork that adds ML-DSA-87 (FIPS 204 Level 5
 
 > Network launch: Q3 2026 · Testnet open now
 
+📄 **[Read the GarudaChain Whitepaper](WHITEPAPER.md)** — full protocol specification
+
 ---
 
 ## Why GarudaChain?
@@ -35,6 +37,7 @@ garudachain/
 ├── mobile/        Mobile wallet (React Native)
 ├── extension/     Browser wallet extension
 ├── deploy/        Deployment manifests and scripts
+├── WHITEPAPER.md  Protocol whitepaper (v1.0)
 ├── SECURITY.md    Full threat model & hardening documentation (12 passes)
 └── README.md      This file
 ```
